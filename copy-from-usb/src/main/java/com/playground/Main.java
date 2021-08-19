@@ -30,6 +30,10 @@ public class Main {
             }
             return;
         }
+        copyInternal(file, toFolder);
+    }
+
+    private static void copyInternal(final File file, final File toFolder) {
         for (String ext : EXTENSITIONS) {
             if (file.getName().endsWith(ext)) {
                 try {
