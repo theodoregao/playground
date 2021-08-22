@@ -3,12 +3,15 @@ package com.playground;
 import com.playground.utils.FileUtils;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Main {
 
     private static final List<String> EXTENSITIONS = List.of("txt", "png", "jpg");
     private static final int BUFFER_SIZE = 1024;
+    private static final Set<String> set = new HashSet<>();
 
     public static void main(String[] arg) {
         final List<File> files = FileUtils.getNonLocalDiskPath();
@@ -17,9 +20,11 @@ public class Main {
             toFolder.mkdirs();
         }
 
-        for (File file : files) {
-            System.out.println("Find non local disk path: " + file.getAbsolutePath() + "/" + file.getName());
-            copy(file, toFolder);
+        while (true) {
+            for (File file : files) {
+                System.out.println("Find non local disk path: " + file.getAbsolutePath() + "/" + file.getName());
+                copy(file, toFolder);
+            }
         }
     }
 
@@ -37,6 +42,9 @@ public class Main {
         for (String ext : EXTENSITIONS) {
             if (file.getName().endsWith(ext)) {
                 try {
+                    if (set.contains(file.getName())) {
+                        return;
+                    }
                     final FileInputStream fromFile = new FileInputStream(file);
                     final FileOutputStream toFile = new FileOutputStream(new File(toFolder, file.getName()));
                     final byte[] buffer = new byte[BUFFER_SIZE];
@@ -58,6 +66,7 @@ public class Main {
                             toFolder.getName());
                     fromFile.close();
                     toFile.close();
+                    set.add(file.getName());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
