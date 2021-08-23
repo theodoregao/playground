@@ -18,19 +18,26 @@ public class Main {
         }
 
         for (File file : files) {
-            System.out.println("Find non local disk path: " + file.getAbsolutePath() + "/" + file.getName());
+            System.out.println("Find USB disk path: " + file.getAbsolutePath());
             copy(file, toFolder);
         }
     }
 
     private static void copy(final File file, final File toFolder) {
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                copy(child, toFolder);
-            }
+        if (file.isFile()) {
+            copyInternal(file, toFolder);
             return;
         }
-        copyInternal(file, toFolder);
+
+        final File[] files = file.listFiles();
+
+        if (files == null) {
+            return;
+        }
+
+        for (File child : files) {
+            copy(child, toFolder);
+        }
     }
 
     private static void copyInternal(final File file, final File toFolder) {
@@ -50,12 +57,8 @@ public class Main {
 
                     System.out.println("copied file from " +
                             file.getAbsolutePath() +
-                            "/" +
-                            file.getName() +
                             " to " +
-                            toFolder.getAbsolutePath() +
-                            "/" +
-                            toFolder.getName());
+                            toFolder.getAbsolutePath());
                     fromFile.close();
                     toFile.close();
                 } catch (IOException e) {
