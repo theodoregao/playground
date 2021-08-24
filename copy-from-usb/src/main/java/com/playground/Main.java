@@ -1,6 +1,6 @@
 package com.playground;
 
-import com.playground.utils.FileUtils;
+import com.playground.utils.DiskMonitor;
 
 import java.io.*;
 import java.util.HashSet;
@@ -11,23 +11,39 @@ public class Main {
 
     private static final List<String> EXTENSIONS = List.of("txt", "png", "jpg");
     private static final int BUFFER_SIZE = 1024;
-    private static final int SLEEP_TIME = 60 * 1000;
     private static final Set<String> set = new HashSet<>();
 
-    public static void main(String[] arg) throws InterruptedException {
-        final List<File> files = FileUtils.getNonLocalDiskPath();
+    public static void main(String[] arg) {
         final File toFolder = new File("build/copy");
         if (!toFolder.exists()) {
             toFolder.mkdirs();
         }
 
-        while (true) {
-            for (File file : files) {
-                System.out.println("Find USB disk path: " + file.getAbsolutePath());
-                copy(file, toFolder);
+        final DiskMonitor diskMonitor = new DiskMonitor();
+        diskMonitor.setDiskMonitorListener(new DiskMonitor.DiskMonitorListener() {
+            @Override
+            public void onDiskConnected(List<File> paths) {
+                for (File path : paths) {
+                    System.out.println("USB dis connected path: " + path.getAbsolutePath());
+                    copy(path, toFolder);
+                }
             }
-            Thread.sleep(SLEEP_TIME);
-        }
+
+            @Override
+            public void onDiskDisconnected(List<File> paths) {
+                for (File path : paths) {
+                    System.out.println("USB disk removed: " + path.getAbsolutePath());
+                    final Set<String> removeFiles = new HashSet<>();
+                    for (String str: set) {
+                        if (str.startsWith(path.getPath())) {
+                            removeFiles.add(str);
+                        }
+                    }
+                    set.removeAll(removeFiles);
+                }
+            }
+        });
+        diskMonitor.start();
     }
 
     private static void copy(final File file, final File toFolder) {
