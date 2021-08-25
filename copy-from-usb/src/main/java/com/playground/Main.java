@@ -1,17 +1,15 @@
 package com.playground;
 
 import com.playground.utils.DiskMonitor;
+import com.playground.utils.FileUtils;
 
 import java.io.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Main {
 
     private static final List<String> EXTENSIONS = List.of("txt", "png", "jpg");
     private static final int BUFFER_SIZE = 1024;
-    private static final Set<String> set = new HashSet<>();
 
     public static void main(String[] arg) {
         final File toFolder = new File("build/copy");
@@ -24,7 +22,7 @@ public class Main {
             @Override
             public void onDiskConnected(List<File> paths) {
                 for (File path : paths) {
-                    System.out.println("USB dis connected path: " + path.getAbsolutePath());
+                    System.out.println("USB disk connected path: " + path.getAbsolutePath());
                     copy(path, toFolder);
                 }
             }
@@ -33,13 +31,6 @@ public class Main {
             public void onDiskDisconnected(List<File> paths) {
                 for (File path : paths) {
                     System.out.println("USB disk removed: " + path.getAbsolutePath());
-                    final Set<String> removeFiles = new HashSet<>();
-                    for (String str: set) {
-                        if (str.startsWith(path.getPath())) {
-                            removeFiles.add(str);
-                        }
-                    }
-                    set.removeAll(removeFiles);
                 }
             }
         });
@@ -67,12 +58,15 @@ public class Main {
         for (String ext : EXTENSIONS) {
             if (file.getName().endsWith(ext)) {
                 try {
-                    if (set.contains(file.getAbsolutePath())) {
+                    final String checksum = FileUtils.checksum(file);
+                    final String filename = file.getName();
+                    final String dstFilename = checksum + filename.substring(filename.lastIndexOf('.'));
+                    if (new File(toFolder, dstFilename).exists()) {
+                        // the file already exist, return.
                         return;
                     }
                     final FileInputStream fromFile = new FileInputStream(file);
-                    final FileOutputStream toFile = new FileOutputStream(
-                            new File(toFolder, file.getAbsolutePath().replaceAll("/", "_")));
+                    final FileOutputStream toFile = new FileOutputStream(new File(toFolder, dstFilename));
                     final byte[] buffer = new byte[BUFFER_SIZE];
                     int byteRead = 0;
                     do {
@@ -85,10 +79,9 @@ public class Main {
                     System.out.println("copied file from " +
                             file.getAbsolutePath() +
                             " to " +
-                            toFolder.getAbsolutePath());
+                            dstFilename);
                     fromFile.close();
                     toFile.close();
-                    set.add(file.getAbsolutePath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
