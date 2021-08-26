@@ -2,6 +2,10 @@ package com.playground.utils;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,23 @@ public class FileUtils {
         } else { // for Windows
             return getWindowsNonLocalDiskPath();
         }
+    }
+
+    public static String checksum(File file) {
+        try {
+            final MessageDigest md5 = MessageDigest.getInstance("MD5");
+            if (!file.exists()) {
+                return null;
+            }
+            final FileInputStream fis = new FileInputStream(file);
+            md5.update(fis.readAllBytes());
+            fis.close();
+            final byte[] md5Hashcode = md5.digest();
+            return bytesToHexString(md5Hashcode);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static boolean isMacOs() {
@@ -44,5 +65,13 @@ public class FileUtils {
             }
         }
         return nonLocalDisks;
+    }
+
+    private static String bytesToHexString(byte[] bytes) {
+        final StringBuilder sb = new StringBuilder();
+        for (byte b: bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }
