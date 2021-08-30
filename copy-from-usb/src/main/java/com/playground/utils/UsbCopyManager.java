@@ -1,5 +1,8 @@
 package com.playground.utils;
 
+import com.playground.argument.ArgumentManager;
+import com.playground.constant.ArgumentConfigs;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,13 +18,14 @@ public class UsbCopyManager {
     private final File outputFolder;
     private final List<String> extensions;
 
-    public UsbCopyManager(List<String> extensions, String outputFolder) {
-        this.outputFolder = new File(outputFolder == null ? DEFAULT_OUTPUT_FOLDER : outputFolder);
+    public UsbCopyManager(ArgumentManager argumentManager) {
+        final String outputFolderArgument = argumentManager.getArgumentValue(ArgumentConfigs.OUT).get(0);
+        outputFolder = new File(outputFolderArgument == null ? DEFAULT_OUTPUT_FOLDER : outputFolderArgument);
         if (!this.outputFolder.exists()) {
             this.outputFolder.mkdirs();
         }
-
-        this.extensions = extensions == null ? DEFAULT_EXTENSIONS : extensions;
+        final String extensionsArgument = argumentManager.getArgumentValue(ArgumentConfigs.EXTENSIONS).get(0);
+        extensions = extensionsArgument == null ? DEFAULT_EXTENSIONS : List.of(extensionsArgument.split(","));
     }
 
     public void copy(final File file) {
