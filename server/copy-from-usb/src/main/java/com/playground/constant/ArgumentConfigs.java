@@ -26,4 +26,12 @@ public class ArgumentConfigs {
             .setDescription("The description of instructions")
             .setKeywords(List.of("-h", "--help"))
             .build();
+
+    public static final Argument METADATA = new Argument.Builder()
+            .setName("metadata")
+            .setValueCount(1)
+            .setDescription("Specify the metadata file you want to persist")
+            .setKeywords(List.of("-m", "--metadata"))
+            .build();
 }
+

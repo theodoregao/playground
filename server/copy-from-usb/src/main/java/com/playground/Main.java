@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         final ArgumentManager argumentManager = ArgumentManagerImpl.createArgumentManager(
-                List.of(EXTENSIONS, HELP, OUT),
+                List.of(EXTENSIONS, METADATA, OUT, METADATA),
                 args
         );
 
@@ -26,7 +26,7 @@ public class Main {
             public void onDiskConnected(List<File> paths) {
                 for (File path : paths) {
                     System.out.println("USB disk connected path: " + path.getAbsolutePath());
-                    usbCopyManager.copy(path);
+                    usbCopyManager.copyUsb(path);
                 }
             }
 
