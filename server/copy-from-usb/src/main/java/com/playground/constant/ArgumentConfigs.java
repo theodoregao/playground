@@ -34,4 +34,3 @@ public class ArgumentConfigs {
             .setKeywords(List.of("-m", "--metadata"))
             .build();
 }
-

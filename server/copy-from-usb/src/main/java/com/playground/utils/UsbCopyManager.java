@@ -24,6 +24,7 @@ public class UsbCopyManager {
     private final List<String> extensions;
     private final File metadata;
 
+
     private final Gson gson;
     private List<FileMetadata> fileMetadatas;
 
@@ -46,12 +47,22 @@ public class UsbCopyManager {
 
     public void copyUsb(final File usbFolder) {
         try {
-            if (!metadata.exists()) {
+            if (fileMetadatas == null) {
                 fileMetadatas = new ArrayList<>();
             } else {
                 final Type fileMetadataType = new TypeToken<ArrayList<FileMetadata>>(){}.getType();
                 fileMetadatas = gson.fromJson(new BufferedReader(new FileReader(metadata)), fileMetadataType);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        copy(usbFolder);
+
+        try {
+            final FileWriter fileWriter = new FileWriter(metadata);
+            gson.toJson(fileMetadatas, fileWriter);
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,6 +119,7 @@ public class UsbCopyManager {
                     metadata.setSrc(file.getAbsolutePath());
                     metadata.setDate(new Date(System.currentTimeMillis()));
                     fileMetadatas.add(metadata);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
