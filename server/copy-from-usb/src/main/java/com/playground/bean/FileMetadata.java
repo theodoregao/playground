@@ -43,11 +43,11 @@ public class FileMetadata {
 
     @Override
     public String toString() {
-        return "FileMetadata{" +
-                "fileName='" + fileName + '\'' +
-                ", originalFileName='" + originalFileName + '\'' +
-                ", date=" + date +
-                ", src='" + src + '\'' +
+        return "FileMetadata{" + "\n" +
+                "\tfileName='" + fileName + "\n" +
+                "\toriginalFileName='" + originalFileName + "\n" +
+                "\tdate=" + date + "\n" +
+                "\tsrc='" + src + "\n" +
                 '}';
     }
 }
