@@ -36,7 +36,6 @@ public class Main {
                 for (File path : paths) {
                     System.out.println("USB disk connected path: " + path.getAbsolutePath());
                     usbCopyManager.copyUsb(path);
-                    usbCopyManager.filePrint();
                 }
             }
 
