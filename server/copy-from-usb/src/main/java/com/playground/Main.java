@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         final ArgumentManager argumentManager = ArgumentManagerImpl.createArgumentManager(
-                List.of(EXTENSIONS, METADATA, OUT, METADATA),
+                List.of(EXTENSIONS, HELP, OUT, METADATA),
                 args
         );
 

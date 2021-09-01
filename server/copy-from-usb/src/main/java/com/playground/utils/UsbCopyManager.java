@@ -47,7 +47,7 @@ public class UsbCopyManager {
 
     public void copyUsb(final File usbFolder) {
         try {
-            if (fileMetadatas == null) {
+            if (!metadata.exists()) {
                 fileMetadatas = new ArrayList<>();
             } else {
                 final Type fileMetadataType = new TypeToken<ArrayList<FileMetadata>>(){}.getType();
