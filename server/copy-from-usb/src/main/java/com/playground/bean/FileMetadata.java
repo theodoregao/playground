@@ -43,13 +43,11 @@ public class FileMetadata {
 
     @Override
     public String toString() {
-        System.out.println("FileMetadata{" + "\n" +
+        return "FileMetadata{" + "\n" +
                 "\tfileName='" + fileName + "\n" +
                 "\toriginalFileName='" + originalFileName + "\n" +
                 "\tdate=" + date + "\n" +
                 "\tsrc='" + src + "\n" +
-                '}');
-
-        return null;
+                '}';
     }
 }

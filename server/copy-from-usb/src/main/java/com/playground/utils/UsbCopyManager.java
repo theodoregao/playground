@@ -1,32 +1,23 @@
 package com.playground.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.playground.argument.ArgumentManager;
 import com.playground.bean.FileMetadata;
 import com.playground.constant.ArgumentConfigs;
 
 import java.io.*;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UsbCopyManager {
+import static com.playground.constant.DefaultArguments.DEFAULT_EXTENSIONS;
+import static com.playground.constant.DefaultArguments.DEFAULT_OUTPUT_FOLDER;
 
-    private static final String DEFAULT_OUTPUT_FOLDER = "build/copy";
-    private static final List<String> DEFAULT_EXTENSIONS = List.of("txt");
-    private static final String DEFAULT_METADATA = "metadata.json";
+public class UsbCopyManager {
     private static final int BUFFER_SIZE = 1024;
 
     private final File outputFolder;
     private final List<String> extensions;
-    private final List<String> files;
-    private final File metadata;
+    private final RecordManager recordManager;
 
-
-    private final Gson gson;
     private List<FileMetadata> fileMetadatas;
 
     public UsbCopyManager(ArgumentManager argumentManager) {
@@ -35,63 +26,17 @@ public class UsbCopyManager {
         if (!this.outputFolder.exists()) {
             this.outputFolder.mkdirs();
         }
+
         final String extensionsArgument = argumentManager.getArgumentValue(ArgumentConfigs.EXTENSIONS).get(0);
         extensions = extensionsArgument == null ? DEFAULT_EXTENSIONS : List.of(extensionsArgument.split(","));
-        final String fileArgument = argumentManager.getArgumentValue(ArgumentConfigs.FILE).get(0);
-        files = List.of(fileArgument.split(","));
-        final String metadataArgument = argumentManager.getArgumentValue(ArgumentConfigs.METADATA).get(0);
-        metadata = new File(outputFolder, metadataArgument == null ? DEFAULT_METADATA : metadataArgument);
 
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .setDateFormat("yyyy-MM-dd hh:mm:ss a")
-                .create();
+        recordManager = new RecordManager(argumentManager);
     }
 
     public void copyUsb(final File usbFolder) {
-        fileMetadatas = readJson(metadata, gson);
+        fileMetadatas = recordManager.loadFileMetadata();
         copy(usbFolder);
-        writeJson(fileMetadatas, metadata, gson);
-    }
-
-    public void filePrint() {
-        fileMetadatas = readJson(metadata, gson);
-        if (fileMetadatas == null || files == null) {
-            return;
-        }
-
-        for (FileMetadata fileMetadata : fileMetadatas) {
-            for (String file : files) {
-                if (fileMetadata.getFileName().equals(file)) {
-                    fileMetadata.toString();
-                }
-            }
-        }
-    }
-
-    private static List<FileMetadata> readJson(File file, Gson gson) {
-        List<FileMetadata> it = null;
-        try {
-            if (!file.exists()) {
-                it = new ArrayList<>();
-            } else {
-                final Type fileMetadataType = new TypeToken<ArrayList<FileMetadata>>(){}.getType();
-                it = gson.fromJson(new BufferedReader(new FileReader(file)), fileMetadataType);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return it;
-    }
-
-    private static void writeJson(List<FileMetadata> fileMetadatas, File file, Gson gson) {
-        try {
-            final FileWriter fileWriter = new FileWriter(file);
-            gson.toJson(fileMetadatas, fileWriter);
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        recordManager.saveFileMetadata(fileMetadatas);
     }
 
     private void copy(final File file) {

@@ -2,7 +2,9 @@ package com.playground;
 
 import com.playground.argument.ArgumentManager;
 import com.playground.argument.ArgumentManagerImpl;
+import com.playground.bean.FileMetadata;
 import com.playground.utils.DiskMonitor;
+import com.playground.utils.RecordManager;
 import com.playground.utils.UsbCopyManager;
 
 import java.io.*;
@@ -18,17 +20,21 @@ public class Main {
                 args
         );
 
+        // Handle help option
         if (argumentManager.getArgumentValue(HELP) != null) {
             System.out.println(argumentManager.getArgumentDescription());
             return;
         }
 
+        // Handle search file option
         final UsbCopyManager usbCopyManager = new UsbCopyManager(argumentManager);
-        if (argumentManager.getArgumentValue(FILE) != null) {
-            usbCopyManager.filePrint();
+        final List<String> fileArgument = argumentManager.getArgumentValue(FILE);
+        if (fileArgument != null) {
+            searchFiles(argumentManager, List.of(fileArgument.get(0).split(",")));
             return;
         }
 
+        // Handle detect USB and copy file option
         final DiskMonitor diskMonitor = new DiskMonitor();
         diskMonitor.setDiskMonitorListener(new DiskMonitor.DiskMonitorListener() {
             @Override
@@ -48,4 +54,26 @@ public class Main {
         });
         diskMonitor.start();
     }
+
+    private static void searchFiles(ArgumentManager argumentManager, List<String> files) {
+        final RecordManager recordManager = new RecordManager(argumentManager);
+        final List<FileMetadata> fileMetadatas = recordManager.loadFileMetadata();
+        if (fileMetadatas == null || files == null) {
+            return;
+        }
+
+        for (String file: files) {
+            boolean isFound = false;
+            for (int i = 0; i < fileMetadatas.size() && !isFound; i++) {
+                if (fileMetadatas.get(i).getFileName().equals(file)) {
+                    System.out.println(fileMetadatas.get(i));
+                    isFound = true;
+                }
+            }
+            if (!isFound) {
+                System.out.println("Not found any record for " + file);
+            }
+        }
+    }
 }
+
