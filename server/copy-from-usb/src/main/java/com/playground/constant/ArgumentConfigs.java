@@ -33,4 +33,11 @@ public class ArgumentConfigs {
             .setDescription("Specify the metadata file you want to persist")
             .setKeywords(List.of("-m", "--metadata"))
             .build();
+
+    public static final Argument FILE = new Argument.Builder()
+            .setName("file")
+            .setValueCount(1)
+            .setDescription("Print out file metadata")
+            .setKeywords(List.of("-f", "--file"))
+            .build();
 }
