@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="100dp" android:layout_marginStart="50dp" android:layout_marginEnd="100dp">
+    <TextView
+        android:id="@+id/timer_name_txt"
+        android:gravity="center_vertical"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/timer_time_txt"
+        android:gravity="center_vertical|end"
+        android:layout_width="0dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+</LinearLayout>
