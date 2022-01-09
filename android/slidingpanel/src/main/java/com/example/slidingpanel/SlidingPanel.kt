@@ -18,9 +18,8 @@ class SlidingPanel(
         const val COLOR_MOVE = Color.GREEN
     }
 
-    private var _gravity: Int = Gravity.NO_GRAVITY
-    private var _origin: PointF? = null
-    private var _rect: Rect? = null
+    private var origin: PointF? = null
+    private var rect: Rect? = null
 
     init {
         setBackgroundColor(COLOR_NORMAL)
@@ -30,13 +29,13 @@ class SlidingPanel(
                     when (event?.action) {
                         MotionEvent.ACTION_DOWN -> {
                             v.setBackgroundColor(COLOR_MOVE)
-                            _rect = Rect(left, top, right, bottom)
-                            _origin = PointF(event.rawX, event.rawY)
+                            rect = Rect(left, top, right, bottom)
+                            origin = PointF(event.rawX, event.rawY)
                             removeGravity()
                         }
                         MotionEvent.ACTION_UP -> {
                             v.setBackgroundColor(COLOR_NORMAL)
-                            _origin = null
+                            origin = null
                             resolveGravity()
                         }
                         MotionEvent.ACTION_MOVE -> {
@@ -51,10 +50,9 @@ class SlidingPanel(
     }
 
     private fun removeGravity() {
-        _gravity = Gravity.NO_GRAVITY
         val param = layoutParams as FrameLayout.LayoutParams
-        param.gravity = _gravity
-        _rect?.let {
+        param.gravity = Gravity.NO_GRAVITY
+        rect?.let {
             param.leftMargin = it.left
             param.topMargin = it.top
         }
@@ -71,17 +69,17 @@ class SlidingPanel(
     }
 
     private fun moveTo(x: Float, y: Float) {
-        _origin?.let {
+        origin?.let {
             val dx = x - it.x
             val dy = y - it.y
             val layout = parent as FrameLayout
             val param = layoutParams as FrameLayout.LayoutParams
-            _rect?.let {
+            rect?.let {
                 param.leftMargin += dx.toInt()
                 param.topMargin += dy.toInt()
                 param.leftMargin = param.leftMargin.coerceIn(0, layout.width - width)
                 param.topMargin = param.topMargin.coerceIn(0, layout.height - height)
-                _origin = PointF(x, y)
+                origin = PointF(x, y)
             }
             layoutParams = param
         }
