@@ -1,3 +1,4 @@
 rootProject.name = "android"
 include ':infinitetimerlist'
 include ':slidingpanel'
+include ':viewpager'

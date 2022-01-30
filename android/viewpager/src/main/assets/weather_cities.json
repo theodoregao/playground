@@ -1,0 +1,44 @@
+{
+   "cities":[
+      {
+         "id":1,
+         "name":"San Francisco"
+      },
+      {
+         "id":2,
+         "name":"New York"
+      },
+      {
+         "id":3,
+         "name":"Boston"
+      },
+      {
+         "id":4,
+         "name":"Los Angeles"
+      },
+      {
+         "id":5,
+         "name":"Chicago"
+      },
+      {
+         "id":6,
+         "name":"Austin"
+      },
+      {
+         "id":7,
+         "name":"Phoenix"
+      },
+      {
+         "id":8,
+         "name":"San Diego"
+      },
+      {
+         "id":9,
+         "name":"Seattle"
+      },
+      {
+         "id":10,
+         "name":"Detroit"
+      }
+   ]
+}
