@@ -49,6 +49,7 @@ class CityFragment : Fragment() {
 
         MainScope().launch {
             cityViewModel.loadCities()
+            cityViewModel.start()
         }
     }
 

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import shun.gao.viewpager.R
 
@@ -36,6 +37,7 @@ internal class CityItemViewHolder(
 ): RecyclerView.ViewHolder(view) {
 
     private val city = view.findViewById<CheckBox>(R.id.city)
+    private val actualSelected = view.findViewById<TextView>(R.id.actual_selected)
 
     fun bind(cityItem: CityItem) {
         city.isChecked = cityItem.isSelected
@@ -43,6 +45,7 @@ internal class CityItemViewHolder(
         city.setOnCheckedChangeListener { _, isChecked ->
             onItemSelectionChangedListener(CityItem(cityItem.city, isChecked))
         }
+        actualSelected.text = if (cityItem.isSelected) "Y" else "N"
     }
 }
 
